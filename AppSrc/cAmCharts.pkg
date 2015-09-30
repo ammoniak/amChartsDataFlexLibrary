@@ -1,0 +1,504 @@
+Use UI
+Use JSResources.js
+Use tNameValuePair.pkg
+Use cWebHtmlBox.pkg
+//
+
+
+    Struct tNameNumberPair
+        String sName
+        Number sValue
+    End_Struct
+    Struct tNameBooleanPair
+        String sName
+        Boolean sValue
+    End_Struct
+
+    
+    Struct tAmAttributes
+        tNameValuePair[] sAttributes
+        tNameNumberPair[] nAttributes
+        tNameBooleanPair[] bAttributes
+    End_Struct
+    
+    Struct tamChartData
+        String domId
+        tAmAttributes attributes
+        tAmAttributes[] entries
+        tAmAttributes[] graphs
+        tAmAttributes[] valueAxes
+        Boolean chartScrollbar_pbEnabled
+        tAmAttributes chartScrollbar
+        Boolean categoryAxis_pbEnabled
+        tAmAttributes categoryAxis
+        Boolean balloon_pbEnabled
+        tAmAttributes balloon
+        Boolean chartCursor_pbEnabled
+        tAmAttributes chartCursor
+    End_Struct
+    
+Class cAmAttributed is a Mixin
+    Procedure AddNVP String sName String sValue tAmAttributes ByRef attributes
+        tNameValuePair nvp
+        If (sValue<>"") Begin
+            Move sName to nvp.sName
+            Move sValue to nvp.sValue
+            Move nvp to attributes.sAttributes[(SizeOfArray(attributes.sAttributes))]
+        End
+    End_Procedure
+    Procedure AddNNP String sName Number nValue tAmAttributes ByRef attributes
+        tNameNumberPair nvp
+        If (nValue<>"") Begin
+            Move sName to nvp.sName
+            Move nValue to nvp.sValue
+            Move nvp to attributes.nAttributes[(SizeOfArray(attributes.nAttributes))]
+        End
+    End_Procedure
+    Procedure AddNBP String sName Boolean bValue tAmAttributes ByRef attributes
+        tNameBooleanPair nvp
+        Move sName to nvp.sName
+        Move bValue to nvp.sValue
+        Move nvp to attributes.bAttributes[(SizeOfArray(attributes.bAttributes))]
+    End_Procedure
+    
+End_Class
+
+Class cAmGraph is a cObject
+    Import_Class_Protocol cAmAttributed
+    Procedure Construct_Object
+        Property String valueField
+        Property String valueAxis
+        Property String id
+        Property String balloonText
+        Property String fillToGraph
+        Property String fillToAxis
+        Property Number fillAlphas
+        Property String fillColors
+        Property String fillColorsField
+        
+        Forward Send Construct_Object
+        If ((id(Self))="") Begin
+            Set id to (Name(Self))
+        End
+        
+        
+    End_Procedure
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes graph
+        tNameValuePair nvp
+        tNameNumberPair nnp
+        
+        Send AddNVP "id"                (id(Self))          (&graph)
+        Send AddNVP "valueField"        (valueField(Self))  (&graph)
+        Send AddNVP "valueAxis"         (valueAxis(Self))   (&graph)
+        Send AddNVP "balloonText"       (balloonText(Self)) (&graph)
+        Send AddNVP "fillToGraph"       (fillToGraph(Self)) (&graph)
+        Send AddNVP "fillToAxis"        (fillToAxis(Self))  (&graph)
+        Send AddNNP "fillAlphas"        (fillAlphas(Self))  (&graph)
+        Send AddNVP "fillColors"        (fillColors(Self))  (&graph)
+        Send AddNVP "fillColorsField"   (fillColorsField(Self))  (&graph)
+
+        Function_Return graph
+    End_Function
+    
+    Procedure AddGraphToChart tamChartData ByRef chart
+        Integer iPos
+        Move (SizeOfArray(chart.graphs)) to iPos
+        tAmAttributes graph
+        Get GenerateStruct to graph
+        Move graph to chart.graphs[iPos]
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+    End_Procedure
+End_Class
+
+
+
+Class cAmValueAxis is a cObject
+    Import_Class_Protocol cAmAttributed
+    
+    
+    Procedure Construct_Object
+        Property String id
+        Property String axisColor
+        Property Number axisThickness
+        Property Number gridAlpha
+        Property Number axisAlpha
+        { EnumList = "left,right"}
+        Property String posit
+        Property String title
+        Property Number dashLength 1
+        Property Boolean logarithmic False
+        Property String unit
+        Forward Send Construct_Object
+        If ((id(Self))="") Begin
+            Set id to (Name(Self))
+        End
+        
+    End_Procedure
+
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes axis
+
+        // Add properties to the struct:
+        
+        Send AddNVP "id"            (id(Self))          (&axis)
+        Send AddNVP "axisColor"     (axisColor(Self))   (&axis)
+        Send AddNNP "axisThickness" (axisThickness(Self)) (&axis)
+        Send AddNNP "gridAlpha"     (gridAlpha(Self))   (&axis)
+        Send AddNNP "axisAlpha"     (axisAlpha(Self))   (&axis)
+        Send AddNVP "position"      (posit(Self))       (&axis)
+        Send AddNVP "title"         (title(Self))       (&axis)
+        Send AddNVP "unit"          (unit(Self))        (&axis)
+        Send AddNBP "logarithmic"   (logarithmic(Self)) (&axis)
+        Send AddNNP "dashLength"    (dashLength(Self))  (&axis)
+        
+        
+        Function_Return axis
+    End_Function
+    
+    Procedure AddValueAxisToChart tamChartData ByRef chart
+        Integer iPos
+        Move (SizeOfArray(chart.valueAxes)) to iPos
+        tAmAttributes axis
+        Get GenerateStruct to axis
+        Move axis to chart.valueAxes[iPos]
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+    End_Procedure
+End_Class
+
+
+
+Class cAmCharts is a cWebHtmlBox
+    Import_Class_Protocol cAmAttributed
+    //TODO: Add more properties & more classes / charts
+    Procedure Construct_Object
+        { EnumList = "serial, pie, xy, radar, funnel, gauge, map, stock"}
+        { Visibility = Private }
+        Property String type "serial"
+        Property String theme "light"
+        Property String domID
+        
+        { Visibility = Private }
+        Property Boolean chartScrollbar_pbEnabled False
+        { Visibility = Private }
+        Property Boolean categoryAxis_pbEnabled False
+        { Visibility = Private }
+        Property Boolean balloon_pbEnabled  False
+        { Visibility = Private }
+        Property Boolean chartCursor_pbEnabled  False
+        
+        
+        
+        
+        Forward Send Construct_Object
+        
+        Set piHeight to 300
+        Set pbShowBorder to True
+        
+    End_Procedure
+    
+    
+    
+    { MethodType=Event }
+    Function FillData Returns tAmAttributes[]
+        tAmAttributes[] ret
+        Function_Return ret
+    End_Function
+    
+    Function ReadJSfromImage Integer iImage Returns String
+        Boolean bOk
+        Integer iCh        
+        String  sLine
+        String  sStatement   
+        
+        Move "" to sStatement
+        Move False to bOk
+          
+        Get Seq_New_Channel to iCh
+        If (iCh=DF_SEQ_CHANNEL_NOT_AVAILABLE) Begin
+          Error DfErr_Program ("No Channel Available for reading SQL from image")
+        End
+        Else Begin
+          Direct_Input channel iCh ("image:"-String(iImage))
+          While not (SeqEof)
+            Readln sLine
+            Move (sStatement+sLine+ (Character(13)+Character(10))) to sStatement
+          Loop
+          
+          Close_Input channel iCh
+          Send Seq_Release_Channel iCh
+        End
+        Function_Return sStatement  
+    End_Function // ReadSQLfromImage
+    
+    Procedure AccessData Returns tamChartData
+        tamChartData tData
+        tWebValueTree tVT
+        String[] aParam
+        Get GenerateStruct to tData
+        ValueTreeSerializeParameter tData to tVT
+        Send ClientAction "onClientFillData" aParam tVT
+    End_Procedure
+    
+    Function GenerateStruct Returns tamChartData
+        tamChartData chart
+        tNameValuePair attr
+        
+        // set the DOM id, so we know where to draw the chart
+        Move (domID(Self)) to chart.domId
+        
+        //Add all the attributes for the chart (-> properties)
+        Send AddNVP "type" (type(Self)) (&chart.attributes)
+        Send AddNVP "theme" (theme(Self)) (&chart.attributes)
+        
+        //Add all the graphs
+        Broadcast Send AddGraphToChart (&chart)
+        Broadcast Send AddValueAxisToChart (&chart)
+        Broadcast Send AddChartCursorToChart (&chart)
+        Broadcast Send AddChartScrollbarToChart (&chart)
+        Broadcast Send AddCategoryAxisToChart (&chart)
+        Broadcast Send AddBalloonToChart (&chart)
+
+
+        Get FillData to chart.entries
+        
+        
+        Function_Return chart
+    End_Function
+       
+            
+    Procedure OnLoad
+        If (domID(Self) ="") Begin
+            Error DFErr_Program "Property 'domID' needs to be set!"
+            Procedure_Return
+        End
+        Set psHtml to ('<div id="'+(domID(Self))+'" style="width: 100%;height: 100%;"></div>')
+        Forward Send OnLoad
+
+        String sName sScript
+        Get WebObjectName to sName
+        Handle ho
+        Get WebObjectByName sName to ho
+        Get ReadJSfromImage scriptLoader.N to sScript
+        String[] params
+        Move ('(function(){var func = function(){AmCharts.isReady=true;oWebApp.'+sName + '.serverAction("script",[],null,function(oEvent){eval(oEvent.sReturnValue);},oWebApp.'+sName+')};' + sScript + '})();') to params[0]
+        Send ClientAction "eval" params
+    End_Procedure
+    
+    Function script Returns String
+        String sName sScript
+        Get WebObjectName to sName
+        Get ReadJSfromImage loadChart.N to sScript
+        Function_Return (sScript + "('"+sName+"');")
+    End_Function
+
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+        
+        WebPublishFunction script
+        WebPublishProcedure AccessData
+    End_Procedure
+
+    Procedure Refresh Integer eMode
+        Forward Send Refresh eMode
+    End_Procedure
+
+End_Class
+
+Class cAmChartCursor is a cObject
+    Import_Class_Protocol cAmAttributed
+    
+    Procedure Construct_Object
+        
+        Property Boolean pan  False
+        Property Boolean valueLineEnabled  False
+        Property Boolean valueLineBalloonEnabled  False
+        Property Number  cursorAlpha  0
+        Property Number  valueLineAlpha  0.2
+        
+        Forward Send Construct_Object
+    End_Procedure
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes chartCursor
+        Send AddNBP "pan" (pan(Self)) (&chartCursor)
+        Send AddNBP "valueLineEnabled" (valueLineEnabled(Self)) (&chartCursor)
+        Send AddNBP "valueLineBalloonEnabled" (valueLineBalloonEnabled(Self)) (&chartCursor)
+        Send AddNNP "cursorAlpha" (cursorAlpha(Self)) (&chartCursor)
+        Send AddNNP "valueLineAlpha" (valueLineAlpha(Self)) (&chartCursor)
+        Function_Return chartCursor
+    End_Function
+    
+    
+    Procedure AddChartCursorToChart tamChartData ByRef chart
+        If (chart.chartCursor_pbEnabled = True) Begin
+            Error DFErr_Program "Only one ChartCursor per chart allowed!"
+            Procedure_Return
+        End
+        tAmAttributes chartCursor
+        Get GenerateStruct to chartCursor
+        Move chartCursor to chart.chartCursor
+        Move True to chart.chartCursor_pbEnabled
+    End_Procedure
+    
+End_Class
+
+Class cAmChartScrollbar is a cObject
+    Import_Class_Protocol cAmAttributed
+    
+    
+    Procedure Construct_Object
+        
+        Property String graph
+        Property Boolean oppositeAxis
+        
+        Forward Send Construct_Object
+    End_Procedure
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes chartScrollbar
+            Send AddNVP "graph" (graph(Self))  (&chartScrollbar)
+            Send AddNBP "oppositeAxis" (oppositeAxis(Self)) (&chartScrollbar)
+        Function_Return chartScrollbar
+    End_Function
+    
+    
+    Procedure AddChartScrollbarToChart tamChartData ByRef chart
+        If (chart.chartScrollbar_pbEnabled = True) Begin
+            Error DFErr_Program "Only one chartScrollbar per chart allowed!"
+            Procedure_Return
+        End
+        tAmAttributes chartScrollbar
+        Get GenerateStruct to chartScrollbar
+        Move chartScrollbar to chart.chartScrollbar
+        Move True to chart.chartScrollbar_pbEnabled
+    End_Procedure
+End_Class
+
+Class cAmCategoryAxis is a cObject
+    Import_Class_Protocol cAmAttributed
+    
+    
+    Procedure Construct_Object
+        
+        Property Boolean parseDates False
+        Property Number dashLength 1
+        Property Boolean minorGridEnabled True
+        
+        Forward Send Construct_Object
+    End_Procedure
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes categoryAxis
+        Send AddNBP "parseDates" (parseDates(Self))  (&categoryAxis)
+        Send AddNNP "dashLength" (dashLength(Self)) (&categoryAxis)
+        Send AddNBP "minorGridEnabled" (minorGridEnabled(Self))  (&categoryAxis)
+        Function_Return categoryAxis
+    End_Function
+    
+    
+    Procedure AddCategoryAxisToChart tamChartData ByRef chart
+        If (chart.categoryAxis_pbEnabled = True) Begin
+            Error DFErr_Program "Only one categoryAxis per chart allowed!"
+            Procedure_Return
+        End
+        tAmAttributes categoryAxis
+        Get GenerateStruct to categoryAxis
+        Move categoryAxis to chart.categoryAxis
+        Move True to chart.categoryAxis_pbEnabled
+    End_Procedure
+End_Class
+
+
+Class cAmBalloon is a cObject
+    Import_Class_Protocol cAmAttributed
+    
+    
+    Procedure Construct_Object
+        
+        Property Number borderThickness 1
+        Property Number shadowAlpha 0
+        
+        Forward Send Construct_Object
+    End_Procedure
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes balloon
+        Send AddNNP "borderThickness" (borderThickness(Self))  (&balloon)
+        Send AddNNP "shadowAlpha" (shadowAlpha(Self)) (&balloon)
+        Function_Return balloon
+    End_Function
+    
+    
+    Procedure AddBalloonToChart tamChartData ByRef chart
+        If (chart.balloon_pbEnabled = True) Begin
+            Error DFErr_Program "Only one Balloon per chart allowed!"
+            Procedure_Return
+        End
+        tAmAttributes balloon
+        Get GenerateStruct to balloon
+        Move balloon to chart.balloon
+        Move True to chart.balloon_pbEnabled
+    End_Procedure
+    
+End_Class
+
+
+
+Class cAmSerialChart is a cAmCharts
+    Procedure Construct_Object
+        
+        
+        
+        Property String categoryField
+        Property String dataDateFormat "YYYY-MM-DD"
+        
+        Forward Send Construct_Object
+        
+        Set type to "serial"
+    End_Procedure
+    
+    Function GenerateStruct Returns tamChartData
+        tamChartData chart
+        
+        Forward Get GenerateStruct to chart
+        
+        Send AddNVP "categoryField" (categoryField(Self)) (&chart.attributes)
+        Send AddNVP "dataDateFormat" (dataDateFormat(Self)) (&chart.attributes)
+        
+        Function_Return chart
+    End_Function
+End_Class
+
+
+Class cAmPieChart is a cAmCharts
+    Procedure Construct_Object
+        
+        Property String titleField
+        Property String valueField
+        
+        Forward Send Construct_Object
+        
+        Set type to "pie"
+    End_Procedure
+    
+    Function GenerateStruct Returns tamChartData
+        tamChartData chart
+        
+        Forward Get GenerateStruct to chart
+        
+        Send AddNVP "titleField" (titleField(Self)) (&chart.attributes)
+        Send AddNVP "valueField" (valueField(Self)) (&chart.attributes)
+        
+        Function_Return chart
+    End_Function
+    
+End_Class

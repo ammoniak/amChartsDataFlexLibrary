@@ -1,0 +1,14 @@
+Use Windows.pkg
+Use cHtmlHelp.pkg
+Use cApplication.pkg
+Use cAmCharts.pkg
+
+Object oHtmlHelp is a cHtmlHelp
+End_Object
+
+Object oApplication is a cApplication
+    Set pbPreserveEnvironment to False
+    Set peHelpType to htHtmlHelp
+End_Object
+
+Send Info_Box "Hello World" "DataFlex Basic Project"
