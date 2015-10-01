@@ -4,7 +4,6 @@ Use tNameValuePair.pkg
 Use cWebHtmlBox.pkg
 //
 
-
     Struct tNameNumberPair
         String sName
         Number sValue
@@ -14,7 +13,6 @@ Use cWebHtmlBox.pkg
         Boolean sValue
     End_Struct
 
-    
     Struct tAmAttributes
         tNameValuePair[] sAttributes
         tNameNumberPair[] nAttributes
@@ -75,6 +73,10 @@ Class cAmGraph is a cObject
         Property Number fillAlphas
         Property String fillColors
         Property String fillColorsField
+        Property String lineColor
+        Property String lineColorField
+        {EnumList = "line, column, step, smoothedLine, candlestick, ohlc"}
+        Property String type
         
         Forward Send Construct_Object
         If ((id(Self))="") Begin
@@ -98,6 +100,9 @@ Class cAmGraph is a cObject
         Send AddNNP "fillAlphas"        (fillAlphas(Self))  (&graph)
         Send AddNVP "fillColors"        (fillColors(Self))  (&graph)
         Send AddNVP "fillColorsField"   (fillColorsField(Self))  (&graph)
+        Send AddNVP "lineColor"         (lineColor(Self))   (&graph)
+        Send AddNVP "lineColorField"    (lineColorField(Self))   (&graph)
+        Send AddNVP "type"              (type(Self))        (&graph)
 
         Function_Return graph
     End_Function
