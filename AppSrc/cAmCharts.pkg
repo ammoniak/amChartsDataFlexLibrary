@@ -33,6 +33,8 @@ Use cWebHtmlBox.pkg
         tAmAttributes balloon
         Boolean chartCursor_pbEnabled
         tAmAttributes chartCursor
+        tAmAttributes[] titles
+        tAmAttributes[] guides
     End_Struct
     
 Class cAmAttributed is a Mixin
@@ -75,6 +77,7 @@ Class cAmGraph is a cObject
         Property String fillColorsField
         Property String lineColor
         Property String lineColorField
+        Property String negativeLineColor
         {EnumList = "line, column, step, smoothedLine, candlestick, ohlc"}
         Property String type
         
@@ -102,6 +105,7 @@ Class cAmGraph is a cObject
         Send AddNVP "fillColorsField"   (fillColorsField(Self))  (&graph)
         Send AddNVP "lineColor"         (lineColor(Self))   (&graph)
         Send AddNVP "lineColorField"    (lineColorField(Self))   (&graph)
+        Send AddNVP "negativeLineColor" (negativeLineColor(Self)) (&graph)
         Send AddNVP "type"              (type(Self))        (&graph)
 
         Function_Return graph
@@ -190,6 +194,7 @@ Class cAmCharts is a cWebHtmlBox
         Property String type "serial"
         Property String theme "light"
         Property String domID
+        Property Boolean handDrawn False
         
         { Visibility = Private }
         Property Boolean chartScrollbar_pbEnabled False
@@ -263,6 +268,7 @@ Class cAmCharts is a cWebHtmlBox
         //Add all the attributes for the chart (-> properties)
         Send AddNVP "type" (type(Self)) (&chart.attributes)
         Send AddNVP "theme" (theme(Self)) (&chart.attributes)
+        Send AddNBP "handDrawn" (handDrawn(Self)) (&chart.attributes)
         
         //Add all the graphs
         Broadcast Send AddGraphToChart (&chart)
@@ -271,8 +277,9 @@ Class cAmCharts is a cWebHtmlBox
         Broadcast Send AddChartScrollbarToChart (&chart)
         Broadcast Send AddCategoryAxisToChart (&chart)
         Broadcast Send AddBalloonToChart (&chart)
-
-
+        Broadcast Send AddTitlesToChart (&chart)
+        Broadcast Send AddGuidesToChart (&chart)
+        
         Get FillData to chart.entries
         
         
@@ -456,6 +463,118 @@ Class cAmBalloon is a cObject
     
 End_Class
 
+Class cAmGuide is a cObject
+    Import_Class_Protocol cAmAttributed
+    Procedure Construct_Object
+         
+    Property	Boolean         above	        // If you Set it to True, the guide will be displayed above the graphs.
+    Property	Number	        angle		    //	Radar chart only. Specifies angle at which guide should start. Affects only fills, not lines.
+    Property	String	        balloonColor	//	Baloon fill color.
+    Property	String	        balloonText		//	The text which will be displayed If the user rolls-over the guide.
+    Property	Boolean	        boldLabel	False	//	Specifies If label should be bold or not.
+    Property	String	        category		//	Category of the guide (in Case the guide is for category axis).
+    Property	String	        guideColor		    //	Color of a guide label.
+    Property	Number	        dashLength		//	Dash length.
+    Property	String	        fromDate		    //	Date of the guide (in Case the guide is for category axis and parseDates is Set to True).
+    Property	Boolean	        expand	False	//	Works If a guide is added to CategoryAxis and this axis is non-Date-based. If you Set it to True, the guide will start (or be placed, If it's not a fill) on the beginning of the category cell and will end at the end of toCategory cell.
+    Property	Number	        fillAlpha		//	Fill opacity. Value range is 0 - 1.
+    Property	String	        fillColor		//	Fill color.
+    Property	Number	        fontSize		//	Font size of guide label.
+    Property	String	        id		        //	Unique id of a Guide. You don't need to set it, unless you want to.
+    Property	Boolean	        inside		    //	Specifies whether label should be placed inside or outside plot area.
+    Property	String	        label		    //	The label which will be displayed near the guide.
+    Property	Number	        labelRotation	//	Rotation angle of a guide label.
+    Property	Number	        lineAlpha		//	Line opacity.
+    Property	String	        lineColor		//	Line color.
+    Property	Number	        lineThickness	//	Line thickness.
+    Property	String	        posit		    //	Position of guide label. Possible values are "left" or "right" for horizontal axis and "top" or "bottom" for vertical axis.
+    Property	Number	        tickLength		//	Tick length.
+    Property	Number	        toAngle		    //	Radar chart only. Specifies angle at which guide should End. Affects only fills, not lines.
+    Property	String	        toCategory		//	To category of the guide (in Case the guide is for category axis).
+    Property	String	        toDate		    //	To Date of the guide (in Case the guide is for category axis and parseDates is Set to True) If you have both Date and toDate, the space Between these two dates can be filled with color.
+    Property	Number	        toValue		    //	To value of the guide (in Case the guide is for value axis).
+    Property	Number	        fromValue		    //	Value of the guide (in Case the guide is for value axis).
+    Property	String	        valueAxis		//	Value axis of a guide. as you can Add guides directly to the chart, you might need to specify which which value axis should be used.
+
+        
+        Forward Send Construct_Object
+    End_Procedure
+    
+    
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes guide
+        Send AddNBP "above" (above(Self))  (&guide)
+        Send AddNNP "angle" (angle(Self)) (&guide)
+        Send AddNVP "balloonColor" (balloonColor(Self)) (&guide)
+        Send AddNVP "balloonText" (balloonText(Self)) (&guide)
+        Send AddNBP "boldLabel" (boldLabel(Self)) (&guide)
+        Send AddNVP "category" (category(Self)) (&guide)
+        Send AddNVP "color" (guideColor(Self)) (&guide)
+        Send AddNNP "dashLength" (dashLength(Self)) (&guide)
+        Send AddNVP "date" (fromDate(Self)) (&guide)
+        Send AddNBP "expand" (expand(Self)) (&guide)
+        Send AddNNP "fillAlpha" (fillAlpha(Self)) (&guide)
+        Send AddNVP "fillColor" (fillColor(Self)) (&guide)
+        Send AddNNP "fontSize" (fontSize(Self)) (&guide)
+        Send AddNVP "id" (id(Self)) (&guide)
+        Send AddNBP "inside" (inside(Self)) (&guide)
+        Send AddNVP "label" (label(Self)) (&guide)
+        Send AddNNP "labelRotation" (labelRotation(Self)) (&guide)
+        Send AddNNP "lineAlpha" (lineAlpha(Self)) (&guide)
+        Send AddNVP "lineColor" (lineColor(Self)) (&guide)
+        Send AddNNP "lineThickness" (lineThickness(Self)) (&guide)
+        Send AddNVP "position" (posit(Self)) (&guide)
+        Send AddNNP "tickLength" (tickLength(Self)) (&guide)
+        Send AddNNP "toAngle" (toAngle(Self)) (&guide)
+        Send AddNVP "toCategory" (toCategory(Self)) (&guide)
+        Send AddNVP "toDate" (toDate(Self)) (&guide)
+        Send AddNNP "toValue" (toValue(Self)) (&guide)
+        Send AddNNP "value" (fromValue(Self)) (&guide)
+        Send AddNVP "valueAxis" (valueAxis(Self)) (&guide)
+        Function_Return guide
+    End_Function
+    
+    
+    Procedure AddGuidesToChart tamChartData ByRef chart
+        tAmAttributes guide
+        Get GenerateStruct to guide
+        Move guide to chart.guides[(SizeOfArray(chart.guides))]
+    End_Procedure
+    
+End_Class
+
+Class cAmTitle is a cObject
+    Import_Class_Protocol cAmAttributed
+    Procedure Construct_Object
+        Property Number alpha	1
+        Property Boolean bold False
+        Property String text_Color
+        Property String id
+        Property Number size
+        Property String text
+        Forward Send Construct_Object
+        
+    End_Procedure
+    
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes title
+        Send AddNNP "alpha" (alpha(Self))  (&title)
+        Send AddNNP "size" (size(Self)) (&title)
+        Send AddNVP "text" (text(Self)) (&title)
+        Send AddNVP "color" (text_Color(Self)) (&title)
+        Send AddNVP "id" (id(Self)) (&title)
+        Send AddNBP "bold" (bold(Self)) (&title)
+        Function_Return title
+    End_Function
+    
+    
+    Procedure AddTitlesToChart tamChartData ByRef chart
+        tAmAttributes title
+        Get GenerateStruct to title
+        Move title to chart.titles[(SizeOfArray(chart.titles))]
+    End_Procedure
+End_Class
 
 
 Class cAmSerialChart is a cAmCharts

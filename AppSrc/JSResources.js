@@ -53,7 +53,17 @@
         sAttributes : [{sName:df.tString,sValue:df.tString}],
         nAttributes : [{sName:df.tString,sValue:df.tNumber}],
         bAttributes : [{sName:df.tString,sValue:df.tBool}]
-      }
+      },
+      titles : [{
+        sAttributes : [{sName:df.tString,sValue:df.tString}],
+        nAttributes : [{sName:df.tString,sValue:df.tNumber}],
+        bAttributes : [{sName:df.tString,sValue:df.tBool}]
+      }],
+      guides : [{
+        sAttributes : [{sName:df.tString,sValue:df.tString}],
+        nAttributes : [{sName:df.tString,sValue:df.tNumber}],
+        bAttributes : [{sName:df.tString,sValue:df.tBool}]
+      }]
     };
     var tData, tVT;
     // Retrieve value tree and deserialize
@@ -129,6 +139,25 @@
       axis.push(ax);
     });
     chartConfig.valueAxes = axis;
+
+    // add titles
+    var titles = [];
+    chartData.titles.forEach(function(g){
+      var ax={};
+      oObj.generateAttributes(g,ax);
+      titles.push(ax);
+    });
+    chartConfig.titles = titles;
+
+    console.log(chartData.guides);
+    // add guides
+    var guides = [];
+    chartData.guides.forEach(function(g){
+      var ax={};
+      oObj.generateAttributes(g,ax);
+      guides.push(ax);
+    });
+    chartConfig.guides = guides;
     oObj.chartConfig = chartConfig;
 
     var chart = AmCharts.makeChart(chartData.domId, chartConfig);
