@@ -604,6 +604,46 @@ Class cAmSerialChart is a cAmCharts
         
         Function_Return chart
     End_Function
+    { MethodType = Event }
+    Procedure onZoomed String endDate Number endIndex String endValue String startDate Number startIndex String startValue
+        
+    End_Procedure
+    
+    Procedure zoomOut
+        String[] aParams
+        Send ClientAction "zoomOut" aParams
+    End_Procedure
+    
+    Procedure zoomToCategoryValues String startValue String endValue
+        String[] aParams
+        Move startValue to aParams[0]
+        Move endValue to aParams[1]
+        Send ClientAction "zoomToCategoryValues" aParams
+    End_Procedure
+    
+    Procedure zoomToDates String startDate String endDate
+        String[] aParams
+        Move startDate to aParams[0]
+        Move endDate to aParams[1]
+        Send ClientAction "zoomToDates" aParams
+    End_Procedure
+    
+    Procedure zoomToIndexes Integer startIndex Integer endIndex
+        String[] aParams
+        Move startIndex to aParams[0]
+        Move endIndex to aParams[1]
+        Send ClientAction "zoomToIndexes" aParams
+    End_Procedure
+    
+    
+    
+    
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+        WebPublishProcedure onZoomed
+    End_Procedure
+    
+    
 End_Class
 
 

@@ -82,6 +82,25 @@
       target[attr.sName] = attr.sValue;
     });
   };
+
+  oObj.zoomedEvent = function(oEvent){
+    oObj.serverAction("onZoomed",[oEvent.endDate, oEvent.endIndex,oEvent.endValue, oEvent.startDate, oEvent.startIndex, oEvent.startValue]);
+  }
+
+
+  oObj.zoomOut = function(){
+    oObj.chart.zoomOut();
+  };
+  oObj.zoomToCategoryValues = function(start, End){
+    oObj.chart.zoomToCategoryValues(start, End);
+  };
+  oObj.zoomToDates = function(start, End){
+    oObj.chart.zoomToDates(start, End);
+  };
+  oObj.zoomToIndexes = function(start, End){
+    oObj.chart.zoomToIndexes(start, End);
+  };
+
     
   oObj.zoomChart = function(chartData){
     // create chart object
@@ -160,7 +179,13 @@
     chartConfig.guides = guides;
     oObj.chartConfig = chartConfig;
 
+
     var chart = AmCharts.makeChart(chartData.domId, chartConfig);
+    if (chartConfig.type =="serial"){
+      chart.addListener("zoomed", oObj.zoomedEvent);
+    }
+    oObj.chart = chart;
+
     //chart.addListener("rendered", oObj.zoomChart);
     if(chart.zoomToIndexes !== undefined){
       chart.zoomToIndexes(chart.dataProvider.length - 18, chart.dataProvider.length - 1);
