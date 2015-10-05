@@ -187,8 +187,14 @@
     }
     head.appendChild(script);
   }
+      var chalk = function(){
+        load("https://www.amcharts.com/lib/3/themes/chalk.js",func);
+      };
+      var dark = function(){
+        load("https://www.amcharts.com/lib/3/themes/dark.js",chalk);
+      };
       var light = function(){
-        load("https://www.amcharts.com/lib/3/themes/light.js",func);
+        load("https://www.amcharts.com/lib/3/themes/light.js",dark);
       };
       var pie = function(){
         load("https://www.amcharts.com/lib/3/pie.js",light);

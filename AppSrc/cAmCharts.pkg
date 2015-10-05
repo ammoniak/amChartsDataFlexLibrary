@@ -82,6 +82,7 @@ Class cAmGraph is a cObject
         Property String type
         
         Forward Send Construct_Object
+
         If ((id(Self))="") Begin
             Set id to (Name(Self))
         End
@@ -192,7 +193,9 @@ Class cAmCharts is a cWebHtmlBox
         { EnumList = "serial, pie, xy, radar, funnel, gauge, map, stock"}
         { Visibility = Private }
         Property String type "serial"
-        Property String theme "light"
+        //TODO: add more themes
+        {EnumList = "light,dark, chalk"}
+        Property String theme ""
         Property String domID
         Property Boolean handDrawn False
         
@@ -400,7 +403,7 @@ Class cAmCategoryAxis is a cObject
     
     
     Procedure Construct_Object
-        
+        Property Number labelRotation 0
         Property Boolean parseDates False
         Property Number dashLength 1
         Property Boolean minorGridEnabled True
@@ -410,6 +413,7 @@ Class cAmCategoryAxis is a cObject
     
     Function GenerateStruct Returns tAmAttributes
         tAmAttributes categoryAxis
+        Send AddNNP "labelRotation" (labelRotation(Self))  (&categoryAxis)
         Send AddNBP "parseDates" (parseDates(Self))  (&categoryAxis)
         Send AddNNP "dashLength" (dashLength(Self)) (&categoryAxis)
         Send AddNBP "minorGridEnabled" (minorGridEnabled(Self))  (&categoryAxis)
