@@ -87,7 +87,7 @@
     oObj.serverAction("onZoomed",[oEvent.endDate, oEvent.endIndex,oEvent.endValue, oEvent.startDate, oEvent.startIndex, oEvent.startValue]);
   }
 
-
+    // Events / functions triggered by the DataFlex classes:
   oObj.zoomOut = function(){
     oObj.chart.zoomOut();
   };
@@ -100,8 +100,24 @@
   oObj.zoomToIndexes = function(start, End){
     oObj.chart.zoomToIndexes(start, End);
   };
+  oObj.showGraph = function(id){
+    var graph = oObj.chart.getGraphById(id);
+    oObj.chart.showGraph(graph);
+  };
+  oObj.hideGraph = function(id){
+    var graph = oObj.chart.getGraphById(id);
+    oObj.chart.hideGraph(graph);
+  };
+  oObj.highlightGraph = function(id){
+    var graph = oObj.chart.getGraphById(id);
+    oObj.chart.highlightGraph(graph);
+  };
+  oObj.unhighlightGraph = function(id){
+    var graph = oObj.chart.getGraphById(id);
+    oObj.chart.unhighlightGraph(graph);
+  };
 
-    
+    // render the chart
   oObj.zoomChart = function(chartData){
     // create chart object
     var chartConfig = {};

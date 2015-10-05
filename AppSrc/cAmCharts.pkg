@@ -315,6 +315,32 @@ Class cAmCharts is a cWebHtmlBox
         Function_Return (sScript + "('"+sName+"');")
     End_Function
 
+    Procedure showGraph String id
+        String[] aParams
+        Move id to aParams[0]
+        Send ClientAction "showGraph" aParams
+    End_Procedure
+    
+    Procedure hideGraph String id
+        String[] aParams
+        Move id to aParams[0]
+        Send ClientAction "hideGraph" aParams
+    End_Procedure
+    
+    
+    
+    Procedure highlightGraph String id
+        String[] aParams
+        Move id to aParams[0]
+        Send ClientAction "highlightGraph" aParams
+    End_Procedure
+    
+    Procedure unhighlightGraph String id
+        String[] aParams
+        Move id to aParams[0]
+        Send ClientAction "unhighlightGraph" aParams
+    End_Procedure
+    
     Procedure End_Construct_Object
         Forward Send End_Construct_Object
         
@@ -634,6 +660,7 @@ Class cAmSerialChart is a cAmCharts
         Move endIndex to aParams[1]
         Send ClientAction "zoomToIndexes" aParams
     End_Procedure
+    
     
     
     
