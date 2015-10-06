@@ -202,10 +202,6 @@
     }
     oObj.chart = chart;
 
-    //chart.addListener("rendered", oObj.zoomChart);
-    if(chart.zoomToIndexes !== undefined){
-      chart.zoomToIndexes(chart.dataProvider.length - 18, chart.dataProvider.length - 1);
-    }
   };
 
   oObj.serverAction("AccessData");
