@@ -38,6 +38,13 @@ Use cWebHtmlBox.pkg
     End_Struct
     
 Class cAmAttributed is a Mixin
+    
+    Procedure ClearAllAttributes tAmAttributes ByRef attributes
+        Move (ResizeArray(attributes.bAttributes, 0)) to attributes.bAttributes
+        Move (ResizeArray(attributes.nAttributes, 0)) to attributes.nAttributes
+        Move (ResizeArray(attributes.sAttributes, 0)) to attributes.sAttributes
+    End_Procedure
+    
     Procedure AddNVP String sName String sValue tAmAttributes ByRef attributes
         tNameValuePair nvp
         If (sValue<>"") Begin
@@ -78,6 +85,7 @@ Class cAmGraph is a cObject
         Property String lineColor
         Property String lineColorField
         Property String negativeLineColor
+        Property String labelText ""
         {EnumList = "line, column, step, smoothedLine, candlestick, ohlc"}
         Property String type
         
@@ -108,6 +116,7 @@ Class cAmGraph is a cObject
         Send AddNVP "lineColorField"    (lineColorField(Self))   (&graph)
         Send AddNVP "negativeLineColor" (negativeLineColor(Self)) (&graph)
         Send AddNVP "type"              (type(Self))        (&graph)
+        Send AddNVP "labelText"         (labelText(Self))   (&graph)
 
         Function_Return graph
     End_Function
