@@ -146,12 +146,16 @@ Class cAmValueAxis is a cObject
         Property Number axisThickness
         Property Number gridAlpha
         Property Number axisAlpha
+        Property Number minimum
+        Property Number maximum
         { EnumList = "left,right"}
         Property String posit
         Property String title
         Property Number dashLength 1
         Property Boolean logarithmic False
         Property String unit
+        { EnumList = "none, regular, 100%, 3d" }
+        Property String stackType
         Forward Send Construct_Object
         If ((id(Self))="") Begin
             Set id to (Name(Self))
@@ -170,9 +174,12 @@ Class cAmValueAxis is a cObject
         Send AddNNP "axisThickness" (axisThickness(Self)) (&axis)
         Send AddNNP "gridAlpha"     (gridAlpha(Self))   (&axis)
         Send AddNNP "axisAlpha"     (axisAlpha(Self))   (&axis)
+        Send AddNNP "minimum"       (minimum(Self))     (&axis)
+        Send AddNNP "maximum"       (maximum(Self))     (&axis)
         Send AddNVP "position"      (posit(Self))       (&axis)
         Send AddNVP "title"         (title(Self))       (&axis)
         Send AddNVP "unit"          (unit(Self))        (&axis)
+        Send AddNVP "stackType"     (stackType(Self))   (&axis)
         Send AddNBP "logarithmic"   (logarithmic(Self)) (&axis)
         Send AddNNP "dashLength"    (dashLength(Self))  (&axis)
         
