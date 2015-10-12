@@ -150,6 +150,7 @@ Class cAmValueAxis is a cObject
         Property Number maximum
         { EnumList = "left,right"}
         Property String posit
+        Property Number offset
         Property String title
         Property Number dashLength 1
         Property Boolean logarithmic False
@@ -172,6 +173,7 @@ Class cAmValueAxis is a cObject
         Send AddNVP "id"            (id(Self))          (&axis)
         Send AddNVP "axisColor"     (axisColor(Self))   (&axis)
         Send AddNNP "axisThickness" (axisThickness(Self)) (&axis)
+        Send AddNNP "offset"        (offset(Self))      (&axis)
         Send AddNNP "gridAlpha"     (gridAlpha(Self))   (&axis)
         Send AddNNP "axisAlpha"     (axisAlpha(Self))   (&axis)
         Send AddNNP "minimum"       (minimum(Self))     (&axis)
