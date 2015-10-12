@@ -630,6 +630,7 @@ Class cAmSerialChart is a cAmCharts
         
         Property String categoryField
         Property String dataDateFormat "YYYY-MM-DD"
+        Property Boolean pbServerOnZoomed False
         
         Forward Send Construct_Object
         
@@ -643,6 +644,7 @@ Class cAmSerialChart is a cAmCharts
         
         Send AddNVP "categoryField" (categoryField(Self)) (&chart.attributes)
         Send AddNVP "dataDateFormat" (dataDateFormat(Self)) (&chart.attributes)
+        Send AddNBP "pbServerOnZoomed" (pbServerOnZoomed(Self)) (&chart.attributes)
         
         Function_Return chart
     End_Function

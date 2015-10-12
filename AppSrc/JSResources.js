@@ -194,11 +194,13 @@
     });
     chartConfig.guides = guides;
     oObj.chartConfig = chartConfig;
-
+    console.log(oObj);
 
     var chart = AmCharts.makeChart(chartData.domId, chartConfig);
     if (chartConfig.type =="serial"){
-      chart.addListener("zoomed", oObj.zoomedEvent);
+      if(chartConfig.pbServerOnZoomed){
+        chart.addListener("zoomed", oObj.zoomedEvent);
+      }
     }
     oObj.chart = chart;
 
