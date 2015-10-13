@@ -84,10 +84,19 @@ Class cAmGraph is a cObject
         Property String fillColorsField
         Property String lineColor
         Property String lineColorField
+        Property Number lineAlpha 1
         Property String negativeLineColor
         Property String labelText ""
         {EnumList = "line, column, step, smoothedLine, candlestick, ohlc"}
         Property String type
+        Property String xField
+        Property String yField
+        Property Number maxBulletSize
+        {EnumList ="none, round, square, triangleUp, triangleDown, triangleLeft, triangleRight, bubble, diamond, xError, yError, custom"}
+        Property String bullet 
+        Property String customBullet 
+        Property Number bulletBorderAlpha
+        Property Number bulletAlpha
         
         Forward Send Construct_Object
 
@@ -114,9 +123,17 @@ Class cAmGraph is a cObject
         Send AddNVP "fillColorsField"   (fillColorsField(Self))  (&graph)
         Send AddNVP "lineColor"         (lineColor(Self))   (&graph)
         Send AddNVP "lineColorField"    (lineColorField(Self))   (&graph)
+        Send AddNNP "lineAlpha"         (lineAlpha(Self)) (&graph)
         Send AddNVP "negativeLineColor" (negativeLineColor(Self)) (&graph)
         Send AddNVP "type"              (type(Self))        (&graph)
         Send AddNVP "labelText"         (labelText(Self))   (&graph)
+        Send AddNVP "xField"            (xField(Self))      (&graph)
+        Send AddNVP "yField"            (yField(Self))      (&graph)
+        Send AddNVP "bullet"            (bullet(Self))      (&graph)
+        Send AddNVP "customBullet"      (customBullet(Self)) (&graph)
+        Send AddNNP "maxBulletSize"     (maxBulletSize(Self)) (&graph)
+        Send AddNNP "bulletBorderAlpha"     (bulletBorderAlpha(Self)) (&graph)
+        Send AddNNP "bulletAlpha"     (bulletAlpha(Self)) (&graph)
 
         Function_Return graph
     End_Function
@@ -318,8 +335,6 @@ Class cAmCharts is a cWebHtmlBox
 
         String sName sScript
         Get WebObjectName to sName
-        Handle ho
-        Get WebObjectByName sName to ho
         Get ReadJSfromImage scriptLoader.N to sScript
         String[] params
         Move ('(function(){var func = function(){AmCharts.isReady=true;oWebApp.'+sName + '.serverAction("script",[],null,function(oEvent){eval(oEvent.sReturnValue);},oWebApp.'+sName+')};' + sScript + '})();') to params[0]
@@ -712,6 +727,26 @@ Class cAmPieChart is a cAmCharts
         
         Send AddNVP "titleField" (titleField(Self)) (&chart.attributes)
         Send AddNVP "valueField" (valueField(Self)) (&chart.attributes)
+        
+        Function_Return chart
+    End_Function
+    
+End_Class
+
+
+Class cAmXYChart is a cAmCharts
+    Procedure Construct_Object
+        
+        
+        Forward Send Construct_Object
+        
+        Set type to "xy"
+    End_Procedure
+    
+    Function GenerateStruct Returns tamChartData
+        tamChartData chart
+        
+        Forward Get GenerateStruct to chart
         
         Function_Return chart
     End_Function

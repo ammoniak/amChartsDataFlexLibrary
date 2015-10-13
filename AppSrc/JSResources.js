@@ -184,7 +184,6 @@
     });
     chartConfig.titles = titles;
 
-    console.log(chartData.guides);
     // add guides
     var guides = [];
     chartData.guides.forEach(function(g){
@@ -194,7 +193,6 @@
     });
     chartConfig.guides = guides;
     oObj.chartConfig = chartConfig;
-    console.log(oObj);
 
     var chart = AmCharts.makeChart(chartData.domId, chartConfig);
     if (chartConfig.type =="serial"){
@@ -238,8 +236,11 @@
       var pie = function(){
         load("https://www.amcharts.com/lib/3/pie.js",light);
       };
+      var xy = function(){
+        load("https://www.amcharts.com/lib/3/xy.js",pie);
+      };
       var serial = function(){
-        load("https://www.amcharts.com/lib/3/serial.js",pie);
+        load("https://www.amcharts.com/lib/3/serial.js",xy);
       };
       load("https://www.amcharts.com/lib/3/amcharts.js",serial);
 /*
