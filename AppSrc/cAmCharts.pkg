@@ -35,6 +35,8 @@ Use cWebHtmlBox.pkg
         tAmAttributes chartCursor
         tAmAttributes[] titles
         tAmAttributes[] guides
+        Boolean legend_pbEnabled
+        tAmAttributes legend
     End_Struct
     
 Class cAmAttributed is a Mixin
@@ -91,6 +93,7 @@ Class cAmGraph is a cObject
         Property String type
         Property String xField
         Property String yField
+        Property String title
         Property Number maxBulletSize
         {EnumList ="none, round, square, triangleUp, triangleDown, triangleLeft, triangleRight, bubble, diamond, xError, yError, custom"}
         Property String bullet 
@@ -126,6 +129,7 @@ Class cAmGraph is a cObject
         Send AddNNP "lineAlpha"         (lineAlpha(Self)) (&graph)
         Send AddNVP "negativeLineColor" (negativeLineColor(Self)) (&graph)
         Send AddNVP "type"              (type(Self))        (&graph)
+        Send AddNVP "title"              (title(Self))        (&graph)
         Send AddNVP "labelText"         (labelText(Self))   (&graph)
         Send AddNVP "xField"            (xField(Self))      (&graph)
         Send AddNVP "yField"            (yField(Self))      (&graph)
@@ -235,6 +239,8 @@ Class cAmCharts is a cWebHtmlBox
         Property Boolean handDrawn False
         
         { Visibility = Private }
+        Property Boolean legend_pbEnabled False
+        { Visibility = Private }
         Property Boolean chartScrollbar_pbEnabled False
         { Visibility = Private }
         Property Boolean categoryAxis_pbEnabled False
@@ -242,12 +248,11 @@ Class cAmCharts is a cWebHtmlBox
         Property Boolean balloon_pbEnabled  False
         { Visibility = Private }
         Property Boolean chartCursor_pbEnabled  False
-        
+        Property Boolean pbAutLoadChart True
         
         
         
         Forward Send Construct_Object
-        
         Set piHeight to 300
         Set pbShowBorder to True
         
@@ -317,6 +322,7 @@ Class cAmCharts is a cWebHtmlBox
         Broadcast Send AddBalloonToChart (&chart)
         Broadcast Send AddTitlesToChart (&chart)
         Broadcast Send AddGuidesToChart (&chart)
+        Broadcast Send AddLegendToChart (&chart)
         
         Get FillData to chart.entries
         
@@ -330,9 +336,15 @@ Class cAmCharts is a cWebHtmlBox
             Error DFErr_Program "Property 'domID' needs to be set!"
             Procedure_Return
         End
+        
         Set psHtml to ('<div id="'+(domID(Self))+'" style="width: 100%;height: 100%;"></div>')
         Forward Send OnLoad
-
+        If (pbAutLoadChart(Self)) Begin
+            Send LoadChart
+        End
+    End_Procedure
+    
+    Procedure LoadChart
         String sName sScript
         Get WebObjectName to sName
         Get ReadJSfromImage scriptLoader.N to sScript
@@ -340,6 +352,7 @@ Class cAmCharts is a cWebHtmlBox
         Move ('(function(){var func = function(){AmCharts.isReady=true;oWebApp.'+sName + '.serverAction("script",[],null,function(oEvent){eval(oEvent.sReturnValue);},oWebApp.'+sName+')};' + sScript + '})();') to params[0]
         Send ClientAction "eval" params
     End_Procedure
+  
     
     Function script Returns String
         String sName sScript
@@ -491,7 +504,25 @@ Class cAmCategoryAxis is a cObject
         Move True to chart.categoryAxis_pbEnabled
     End_Procedure
 End_Class
-
+Class cAmLegend is a cObject
+    Import_Class_Protocol cAmAttributed
+      
+    Function GenerateStruct Returns tAmAttributes
+        tAmAttributes legend
+        Function_Return legend
+    End_Function
+    Procedure AddLegendToChart tamChartData ByRef chart
+        If (chart.legend_pbEnabled = True) Begin
+            Error DFErr_Program "Only one ChartCursor per chart allowed!"
+            Procedure_Return
+        End
+        tAmAttributes legend
+        Get GenerateStruct to legend
+        Move legend to chart.legend
+        Move True to chart.legend_pbEnabled
+    End_Procedure
+    
+End_Class
 
 Class cAmBalloon is a cObject
     Import_Class_Protocol cAmAttributed

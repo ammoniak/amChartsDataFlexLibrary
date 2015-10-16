@@ -63,7 +63,13 @@
         sAttributes : [{sName:df.tString,sValue:df.tString}],
         nAttributes : [{sName:df.tString,sValue:df.tNumber}],
         bAttributes : [{sName:df.tString,sValue:df.tBool}]
-      }]
+      }],
+      legend_pbEnabled: df.tBool,
+      legend : {
+        sAttributes : [{sName:df.tString,sValue:df.tString}],
+        nAttributes : [{sName:df.tString,sValue:df.tNumber}],
+        bAttributes : [{sName:df.tString,sValue:df.tBool}]
+      }
     };
     var tData, tVT;
     // Retrieve value tree and deserialize
@@ -144,6 +150,11 @@
       var cc = {};
       oObj.generateAttributes(chartData.chartCursor,cc);
       chartConfig.chartCursor = cc;
+    }
+    if(chartData.legend_pbEnabled){
+      var cc = {};
+      oObj.generateAttributes(chartData.legend,cc);
+      chartConfig.legend = cc;
     }
 
 
