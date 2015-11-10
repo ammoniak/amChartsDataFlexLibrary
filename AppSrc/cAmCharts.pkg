@@ -679,6 +679,7 @@ Class cAmSerialChart is a cAmCharts
         Property String categoryField
         Property String dataDateFormat "YYYY-MM-DD"
         Property Boolean pbServerOnZoomed False
+        Property Boolean pbServerOnClick False
         
         Forward Send Construct_Object
         
@@ -693,14 +694,21 @@ Class cAmSerialChart is a cAmCharts
         Send AddNVP "categoryField" (categoryField(Self)) (&chart.attributes)
         Send AddNVP "dataDateFormat" (dataDateFormat(Self)) (&chart.attributes)
         Send AddNBP "pbServerOnZoomed" (pbServerOnZoomed(Self)) (&chart.attributes)
+        Send AddNBP "pbServerOnClick" (pbServerOnClick(Self)) (&chart.attributes)
         
         Function_Return chart
     End_Function
+
     { MethodType = Event }
     Procedure onZoomed String endDate Number endIndex String endValue String startDate Number startIndex String startValue
         
     End_Procedure
     
+    { MethodType = Event }
+    Procedure OnClicked String sCategory String sValue
+        
+    End_Procedure
+
     Procedure zoomOut
         String[] aParams
         Send ClientAction "zoomOut" aParams
@@ -734,6 +742,7 @@ Class cAmSerialChart is a cAmCharts
     Procedure End_Construct_Object
         Forward Send End_Construct_Object
         WebPublishProcedure onZoomed
+        WebPublishProcedure OnClicked
     End_Procedure
     
     

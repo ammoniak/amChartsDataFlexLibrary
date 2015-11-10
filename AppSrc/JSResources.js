@@ -92,6 +92,10 @@
   oObj.zoomedEvent = function(oEvent){
     oObj.serverAction("onZoomed",[oEvent.endDate, oEvent.endIndex,oEvent.endValue, oEvent.startDate, oEvent.startIndex, oEvent.startValue]);
   }
+  oObj.itemClickedEvent = function(oEvent){
+    oObj.serverAction("OnClicked",[oEvent.item.category, oEvent.item.values.value]);
+  }
+
 
     // Events / functions triggered by the DataFlex classes:
   oObj.zoomOut = function(){
@@ -209,6 +213,9 @@
     if (chartConfig.type =="serial"){
       if(chartConfig.pbServerOnZoomed){
         chart.addListener("zoomed", oObj.zoomedEvent);
+      }
+      if(chartConfig.pbServerOnClick){
+        chart.addListener("clickGraphItem", oObj.itemClickedEvent);
       }
     }
     oObj.chart = chart;
